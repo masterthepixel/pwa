@@ -4,8 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "npm run build && npm run start",
-    "build": "next build",
-    "deploy": "aws s3 sync public/ s3://pz-hosting",
+    "build": "next build && npm run export",
+    "export": "copyfiles -f .next/static out/_next && copyfiles -f .next/server/pages/index.html out && copyfiles -a -f public/*.* out",
+    "deploy": "aws s3 sync out/ s3://pz-hosting",
     "start": "next start",
     "lint": "next lint"
   },
@@ -17,6 +18,7 @@
     "sass": "^1.55.0"
   },
   "devDependencies": {
+    "copyfiles": "^2.4.1",
     "eslint": "8.25.0",
     "eslint-config-next": "12.3.1"
   }

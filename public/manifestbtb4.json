@@ -1,0 +1,29 @@
+{
+  "name": "Beat The Boss 4",
+  "short_name": "Beat Boss 4",
+  "lang": "en-US",
+  "scope": "https://gamechannel.io/game/btb4/",
+  "start_url": "/game/btb4/?appID=A235a6-38c1562&utm_source=homescreen&utm_medium=pwa",
+  "display": "fullscreen",
+  "theme_color": "#fff",
+  "background_color": "#fff",
+  "description": "Beat the Boss 4 Game",
+  "icons": [
+    {
+      "src": "/game/btb4/192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/game/btb4/256.png",
+      "sizes": "256x256",
+      "type": "image/png"
+    },
+    {
+      "src": "/game/btb4/512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

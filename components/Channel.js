@@ -1,8 +1,11 @@
 import Image from "next/image";
 import React, { useState, useEffect } from "react";
+import Head from "next/head";
 import GamePlayer from "./Preview";
-import ShareTab from "./ShareTab";
 import PlayIcon from "../assets/svgs/play-solid.svg";
+import GooglePlay from "../assets/svgs/google-play.svg";
+import AppStore from "../assets/svgs/app-store.svg";
+import { getGameUrl } from "../utils/operators";
 
 const INVENTORY_URL =
   "https://pz-static-public.s3.us-east-2.amazonaws.com/inventory.json";
@@ -13,15 +16,14 @@ export default function GameChannel({ appID, onClickSave }) {
   const [app, setApp] = useState(null);
   const [playing, setPlaying] = useState(false);
   const [modalStatus, setModalStatus] = useState("neutral");
+  const [hideSaveButton, setHideSaveButton] = useState(false);
 
   useEffect(() => {
     const getAppData = async () => {
       try {
         const result = await fetch(INVENTORY_URL);
         const data = await result.json();
-        console.log({ data, appID });
-        const find = (data?.data || []).find((i) => i.app_id === appID);
-        console.log({ find });
+        const find = (data?.data || []).find((i) => i.app_code === appID);
         setApp(find);
       } catch (e) {
         setError(e.toString());
@@ -30,6 +32,10 @@ export default function GameChannel({ appID, onClickSave }) {
       }
     };
     getAppData();
+    if (window.matchMedia("(display-mode: standalone)").matches) {
+      // hide the button.
+      setHideSaveButton(true);
+    }
   }, [appID]);
 
   const onPlayGame = () => {
@@ -50,7 +56,6 @@ export default function GameChannel({ appID, onClickSave }) {
   };
 
   const onSend = () => {
-    console.log("Send");
     setModalStatus("loading");
     setTimeout(() => {
       setModalStatus("sent");
@@ -58,7 +63,7 @@ export default function GameChannel({ appID, onClickSave }) {
   };
 
   if (isLoading) return <div className="simple-spinner" />;
-  if (!isLoading && !app) return <p>Invalid app id</p>;
+  if (!isLoading && !app) return <p className="invalid-app">App not found</p>;
 
   const renderChannel = () => {
     if (app.orientation === "horizontal") {
@@ -70,7 +75,7 @@ export default function GameChannel({ appID, onClickSave }) {
           >
             {playing && (
               <GamePlayer
-                url="https://app.parallelz.com/?app=btb&auth=jeuvyiph1"
+                url={getGameUrl(app.app_code)}
                 onClose={onClosePlayer}
               />
             )}
@@ -94,23 +99,31 @@ export default function GameChannel({ appID, onClickSave }) {
               />
               <p>{app.title}</p>
             </div>
-            <button className="save-game-button" onClick={onClickSave}>
-              Save Game
-            </button>
+            {!hideSaveButton && (
+              <button className="save-game-button" onClick={onClickSave}>
+                Save Game
+              </button>
+            )}
+
             <div className="game-version">
-              <p>
-                Mobile Version{" "}
-                <span className="platform" onClick={onClickPlatform}>
-                  Apple
-                </span>{" "}
-                |{" "}
-                <span className="platform" onClick={onClickPlatform}>
-                  Google
-                </span>
-              </p>
+              <div className="game-download-button">
+                <Image
+                  src={GooglePlay}
+                  className="platform"
+                  alt="google-play-button"
+                  onClick={onClickPlatform}
+                />
+              </div>
+              <div className="game-download-button">
+                <Image
+                  src={AppStore}
+                  className="platform"
+                  alt="app-store-button"
+                  onClick={onClickPlatform}
+                />
+              </div>
             </div>
           </div>
-          {/* <ShareTab align="right" /> */}
         </div>
       );
     }
@@ -125,7 +138,7 @@ export default function GameChannel({ appID, onClickSave }) {
             >
               {playing && (
                 <GamePlayer
-                  url="https://app.parallelz.com/?app=btb&auth=jeuvyiph1"
+                  url={getGameUrl(app.app_code)}
                   onClose={onClosePlayer}
                 />
               )}
@@ -143,14 +156,28 @@ export default function GameChannel({ appID, onClickSave }) {
             </div>
           </div>
           <div className="desktop-save-game">
-            <button className="save-game-button" onClick={onSaveGame}>
-              Save Game
-            </button>
+            {!hideSaveButton && (
+              <button className="save-game-button" onClick={onClickSave}>
+                Save Game
+              </button>
+            )}
             <div className="game-version">
-              <p>
-                Mobile Version <span className="platform">Apple</span> |{" "}
-                <span className="platform">Google</span>
-              </p>
+              <div className="game-download-button">
+                <Image
+                  src={GooglePlay}
+                  className="platform"
+                  alt="google-play-button"
+                  onClick={onClickPlatform}
+                />
+              </div>
+              <div className="game-download-button">
+                <Image
+                  src={AppStore}
+                  className="platform"
+                  alt="app-store-button"
+                  onClick={onClickPlatform}
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -162,17 +189,28 @@ export default function GameChannel({ appID, onClickSave }) {
           <p>{app.title}</p>
         </div>
         <div className="mobile-save-game">
-          <button className="save-game-button" onClick={onSaveGame}>
-            Save Game
-          </button>
+          {!hideSaveButton && (
+            <button className="save-game-button" onClick={onClickSave}>
+              Save Game
+            </button>
+          )}
           <div className="game-version">
-            <p>
-              Mobile Version <span className="platform">Apple</span> |{" "}
-              <span className="platform">Google</span>
-            </p>
+            <div className="game-download-button">
+              <Image
+                src={GooglePlay}
+                alt="google-play-button"
+                onClick={onClickPlatform}
+              />
+            </div>
+            <div className="game-download-button">
+              <Image
+                src={AppStore}
+                alt="app-store-button"
+                onClick={onClickPlatform}
+              />
+            </div>
           </div>
         </div>
-        {/* <ShareTab align="left" /> */}
       </div>
     );
   };
@@ -214,7 +252,34 @@ export default function GameChannel({ appID, onClickSave }) {
   };
 
   return (
-    <div style={{ paddingLeft: 50 }}>
+    <div className="channel-wrapper">
+      <Head>
+        <title>{app?.title || "Untitled"}</title>
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="48x48"
+          href={`/game/${app.app_code}/favicon.ico`}
+        />
+        <link
+          rel="apple-touch-icon"
+          sizes="192x192"
+          href={`/game/${app.app_code}/192.png`}
+        />
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="16x16"
+          href={`/game/${app.app_code}/16.png`}
+        />
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="32x32"
+          href={`/game/${app.app_code}/32.png`}
+        />
+        <link rel="manifest" href={`/manifest${app.app_code || ""}.json`} />
+      </Head>
       {renderChannel()}
       {modalShown && renderModal()}
     </div>

@@ -1,0 +1,29 @@
+{
+  "name": "Cookie Jam",
+  "short_name": "Cookie Jam",
+  "lang": "en-US",
+  "scope": "https://gamechannel.io/game/jam/",
+  "start_url": "/game/jam/?appID=<INSERT APPID>&utm_source=homescreen&utm_medium=pwa",
+  "display": "fullscreen",
+  "theme_color": "#fff",
+  "background_color": "#fff",
+  "description": "Cookie Jam Game",
+  "icons": [
+    {
+      "src": "/game/jam/192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/game/jam/256.png",
+      "sizes": "256x256",
+      "type": "image/png"
+    },
+    {
+      "src": "/game/jam/512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
